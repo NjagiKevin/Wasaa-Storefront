@@ -1,0 +1,146 @@
+astro
+.git
+.env
+airflow_settings.yaml
+logs/
+.venv
+airflow.db
+airflow.cfg
+# .dockerignore for Airflow ML Pipeline
+# Optimize Docker build by excluding unnecessary files
+
+# Version Control
+.git
+.gitignore
+.gitattributes
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.pytest_cache/
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Documentation
+README.md
+docs/
+*.md
+
+# Temporary files
+tmp/
+temp/
+.tmp/
+*.tmp
+*.temp
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Docker
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Airflow specific exclusions
+logs/
+airflow.db
+airflow.cfg
+unittests.cfg
+airflow_login.py
+webserver_config.py
+standalone_admin_password.txt
+
+# ML Models and Data (exclude large files, should be mounted)
+*.pkl
+*.joblib
+*.h5
+*.model
+models/
+data/raw/
+data/processed/
+data/external/
+
+# Test files
+tests/
+*_test.py
+test_*.py
+
+# Configuration files with secrets
+.env
+.env.local
+.env.production
+secrets/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.py[cod]
+*.env
+.venv/
+venv/
+.venv311/
+env/
+ENV/
+
+# Airflow logs / database / temp
+logs/
+*.db
+*.sqlite
+*.log
+*.pid
+tmp/
+__pycache__/
+
+# Docker / compose
+.dockerignore
+Dockerfile
+docker-compose.override.yml
+docker-compose.override.yaml
+docker-compose.local.yml
+docker-compose.local.yaml
+
+# MLflow & WandB runs
+mlruns/
+wandb/
+
+# IDEs / editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Misc
+*.bak
+*.swp
+*.DS_Store
