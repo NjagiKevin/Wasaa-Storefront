@@ -6,16 +6,13 @@ from airflow.utils.dates import days_ago
 from datetime import datetime
 import mlflow
 import wandb
-import os
 
 from app.services.demand_forecast_service import DemandForecastService
 from app.services.recommendation_service import RecommendationService
 from app.services.pricing_service import PricingService
 from app.services.ads_manager_service import AdsManagerService
-from airflow.operators.dagrun_operator import TriggerDagRunOperator
+from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 
-# Set W&B API key
-os.environ["WANDB_API_KEY"] = "0d6b7fb3c73882e30b0ff6225435db9ebca921d9"
 
 default_args = {
     'owner': 'wasaa',
@@ -87,7 +84,7 @@ with DAG(
 
     trigger_training = TriggerDagRunOperator(
         task_id="trigger_training_dag",
-        trigger_dag_id="ml_training_dag",
+        trigger_dag_id="wasaa_storefront_training_dag",
         wait_for_completion=False,
         poke_interval=600,
     )

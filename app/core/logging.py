@@ -28,3 +28,12 @@ def get_logger(name: str = None) -> logging.Logger:
     if name:
         return logging.getLogger(name)
     return logger
+
+def setup_logging():
+    """Setup logging configuration for the application"""
+    # This function is called by main.py to ensure logging is properly configured
+    logging.basicConfig(
+        level=logging.INFO,
+        format="[%(asctime)s] [%(levelname)s] [%(name)s] - %(message)s"
+    )
+    return logger

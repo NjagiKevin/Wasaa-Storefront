@@ -1,7 +1,7 @@
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from typing import Optional
-import jwt
+from jose import jwt
 
 from app.core.config import settings
 
@@ -30,3 +30,10 @@ def decode_access_token(token: str) -> dict:
         raise ValueError("Token expired")
     except jwt.JWTError:
         raise ValueError("Invalid token")
+
+def verify_token(token: str) -> Optional[dict]:
+    """Verify and decode a JWT token"""
+    try:
+        return decode_access_token(token)
+    except ValueError:
+        return None

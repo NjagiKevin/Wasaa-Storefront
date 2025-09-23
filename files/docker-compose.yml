@@ -1,1 +1,49 @@
-# docker-compose.yml placeholder
+version: '3.8'
+
+services:
+
+  # Redis for caching
+  redis:
+    image: redis:7-alpine
+    container_name: wasaa_storefront_redis
+    ports:
+      - "6380:6379"  # Different port to avoid conflicts
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - wasaa_network
+
+  # FastAPI Application
+  api:
+    build: 
+      context: ..
+      dockerfile: files/Dockerfile
+    container_name: wasaa_storefront_api
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@host.docker.internal:5432/storefront
+      - REDIS_URL=redis://redis:6379/0
+      - DEBUG=true
+      # Add other environment variables as needed
+    ports:
+      - "8001:8000"  # Different port to avoid conflicts with Airflow
+    volumes:
+      - ../:/app
+      - ../logs:/app/logs
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - wasaa_network
+    restart: unless-stopped
+
+volumes:
+  redis_data:
+
+networks:
+  wasaa_network:
+    driver: bridge

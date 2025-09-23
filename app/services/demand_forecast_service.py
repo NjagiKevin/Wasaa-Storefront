@@ -39,3 +39,13 @@ class DemandForecastService:
             campaign["demand_score"] = scores.get(pid, 0.5)
             enriched_campaigns.append(campaign)
         return enriched_campaigns
+
+    @staticmethod
+    def get_latest_accuracy() -> float:
+        """Stub latest demand accuracy metric (e.g., MAPE-based)."""
+        return 0.90
+
+    @staticmethod
+    def check_data_drift() -> Dict[str, bool]:
+        """Stub drift check: return structure used by monitoring DAG."""
+        return {"drift_detected": False}

@@ -1,0 +1,116 @@
+{
+  "info": {
+    "name": "Wasaa Storefront ML API",
+    "_postman_id": "8f2e7b3a-6b5e-4ef3-9b8b-2b24f7d8a1a2",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8000", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Recommendations",
+      "item": [
+        {
+          "name": "Get Recommended Products",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Accept", "value": "application/json" } ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/recommendations/products/USER_123",
+              "host": [ "{{baseUrl}}" ],
+              "path": ["api","v1","recommendations","products","USER_123"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Forecasting",
+      "item": [
+        {
+          "name": "Demand Forecast (product_ids)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"product_ids\": [\"P001\", \"P002\", \"P003\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/forecasting/demand",
+              "host": [ "{{baseUrl}}" ],
+              "path": ["api","v1","forecasting","demand"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Fraud",
+      "item": [
+        {
+          "name": "Score Transaction",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"transaction_id\": \"T-1001\",\n  \"user_id\": \"USER_123\",\n  \"amount\": 259.99,\n  \"currency\": \"KES\",\n  \"channel\": \"web\",\n  \"timestamp\": \"2025-09-23T04:45:00Z\",\n  \"features\": {\n    \"ip_country\": \"KE\",\n    \"device_type\": \"mobile\",\n    \"num_failed_payments_7d\": 1\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/fraud/score",
+              "host": [ "{{baseUrl}}" ],
+              "path": ["api","v1","fraud","score"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Metrics",
+      "item": [
+        {
+          "name": "Prometheus /metrics",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Accept", "value": "*/*" } ],
+            "url": {
+              "raw": "{{baseUrl}}/metrics",
+              "host": [ "{{baseUrl}}" ],
+              "path": ["metrics"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Service Health",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Accept", "value": "application/json" } ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/health",
+              "host": [ "{{baseUrl}}" ],
+              "path": ["api","v1","health"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

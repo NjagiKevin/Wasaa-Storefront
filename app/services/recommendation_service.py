@@ -18,6 +18,16 @@ class RecommendationService:
     pricing_service = PricingService()
 
     @staticmethod
+    def train_hybrid_model(campaigns: List[Dict]) -> None:
+        """Stub training routine for hybrid model. Replace with real training."""
+        logging.info(f"Training hybrid recommender on {len(campaigns)} campaigns (stub)")
+
+    @staticmethod
+    def generate_hybrid_recommendations(campaigns: List[Dict]) -> List[Dict]:
+        """Wrapper to produce recommendations for campaigns using current heuristics."""
+        return RecommendationService.recommend_products_for_campaigns(campaigns)
+
+    @staticmethod
     def _get_product_features(db) -> pd.DataFrame:
         products = db.query(Product).all()
         data = [{"product_id": str(p.product_id), "category": p.category or "", 
@@ -72,3 +82,8 @@ class RecommendationService:
                 enriched.append(campaign)
 
         return enriched
+
+    @staticmethod
+    def get_latest_ctr() -> float:
+        """Stub CTR metric for recommendation quality monitoring."""
+        return 0.12

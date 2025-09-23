@@ -4,7 +4,6 @@ from airflow.utils.dates import days_ago
 from airflow.models import Variable
 from datetime import datetime
 import logging
-import os
 import mlflow
 import wandb
 
@@ -13,24 +12,21 @@ from app.services.recommendation_service import RecommendationService
 from app.services.pricing_service import PricingService
 from app.services.ads_manager_service import AdsManagerService
 
-# Set W&B API key
-os.environ["WANDB_API_KEY"] = "0d6b7fb3c73882e30b0ff6225435db9ebca921d9"
-
 default_args = {
-    'owner': 'wasaa',
+    'owner': 'wasaa-storefront',
     'depends_on_past': False,
     'retries': 2,
     'retry_delay': 300,  # seconds
 }
 
 with DAG(
-    dag_id='ml_training_dag',
+    dag_id='wasaa_storefront_training_dag',
     default_args=default_args,
-    description='Robust ML training pipeline for storefront with AdsManager integration',
+    description='Wasaa Storefront ML training pipeline with AdsManager integration',
     schedule_interval='@daily',
     start_date=days_ago(1),
     catchup=False,
-    tags=['ml', 'training'],
+    tags=['wasaa', 'storefront', 'ml', 'training'],
 ) as dag:
 
     @task
@@ -74,7 +70,8 @@ with DAG(
         run_name = f"demand_{datetime.now().strftime('%Y%m%d_%H%M')}"
         mlflow.start_run(run_name=run_name)
         wandb.init(project="wasaa_storefront", name=run_name)
-        DemandForecastService.train_model(campaigns)
+        # If you add a concrete trainer, call it here; for now enrich campaigns
+        DemandForecastService.predict_demand_for_campaigns(campaigns)
         mlflow.log_artifact("models/demand_model.pkl")
         wandb.finish()
         mlflow.end_run()
@@ -86,6 +83,7 @@ with DAG(
         run_name = f"recommendation_{datetime.now().strftime('%Y%m%d_%H%M')}"
         mlflow.start_run(run_name=run_name)
         wandb.init(project="wasaa_storefront", name=run_name)
+        # Train (stub) — implement concrete trainer in service
         RecommendationService.train_hybrid_model(campaigns)
         mlflow.log_artifact("models/recommendation_model.pkl")
         wandb.finish()

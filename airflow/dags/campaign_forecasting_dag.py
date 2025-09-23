@@ -5,15 +5,12 @@ from datetime import datetime
 import logging
 import mlflow
 import wandb
-import os
 
 from app.services.demand_forecast_service import DemandForecastService
 from app.services.recommendation_service import RecommendationService
 from app.services.pricing_service import PricingService
 from app.services.ads_manager_service import AdsManagerService
 
-# Set W&B API key
-os.environ["WANDB_API_KEY"] = "0d6b7fb3c73882e30b0ff6225435db9ebca921d9"
 
 default_args = {
     'owner': 'wasaa',
@@ -56,7 +53,7 @@ with DAG(
         run_name = f"campaign_demand_{datetime.now().strftime('%Y%m%d_%H%M')}"
         mlflow.start_run(run_name=run_name)
         wandb.init(project="wasaa_storefront", name=run_name)
-        DemandForecastService.predict_demand(campaigns)
+        DemandForecastService.predict_demand_for_campaigns(campaigns)
         mlflow.log_artifact("models/demand_model.pkl")
         wandb.finish()
         mlflow.end_run()
@@ -80,7 +77,7 @@ with DAG(
         run_name = f"campaign_pricing_{datetime.now().strftime('%Y%m%d_%H%M')}"
         mlflow.start_run(run_name=run_name)
         wandb.init(project="wasaa_storefront", name=run_name)
-        PricingService.calculate_price_score(campaigns)
+        PricingService.enrich_campaigns_with_price_score(campaigns)
         mlflow.log_artifact("models/pricing_model.pkl")
         wandb.finish()
         mlflow.end_run()

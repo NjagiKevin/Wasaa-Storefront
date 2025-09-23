@@ -37,3 +37,13 @@ class PricingService:
             c["price_score"] = scores.get(c.get("product_id"), 0.5)
         logging.info("Enriched campaigns with price scores")
         return campaigns
+
+    @staticmethod
+    def get_latest_price_accuracy() -> float:
+        """Stub pricing accuracy metric for monitoring."""
+        return 0.88
+
+    @staticmethod
+    def evaluate_pricing_effectiveness() -> Dict[str, float]:
+        """Stub effectiveness summary for dynamic pricing monitoring."""
+        return {"lift": 0.05, "avg_margin": 0.20}

@@ -8,8 +8,6 @@ services:
       POSTGRES_USER: airflow
       POSTGRES_PASSWORD: airflow
       POSTGRES_DB: airflow
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: always
@@ -19,18 +17,19 @@ services:
     container_name: wasaa_storefront_airflow
     depends_on:
       - postgres
+    env_file:
+      - ./.env
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
       AIRFLOW__CORE__FERNET_KEY: 'your_fernet_key_here'
       AIRFLOW__WEBSERVER__EXPOSE_CONFIG: 'True'
       AIRFLOW_UID: 50000
-      WANDB_API_KEY: "0d6b7fb3c73882e30b0ff6225435db9ebca921d9"
     ports:
-      - "8080:8080"  # Airflow UI
+      - "8081:8080"  # Airflow UI (isolated instance)
     volumes:
       - ./dags:/opt/airflow/dags
-      - ./app:/opt/airflow/app
+      - ../app:/opt/airflow/app
       - ./logs:/opt/airflow/logs
       - ./plugins:/opt/airflow/plugins
     command: >
