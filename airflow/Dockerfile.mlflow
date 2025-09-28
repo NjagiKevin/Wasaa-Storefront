@@ -1,0 +1,27 @@
+FROM ghcr.io/mlflow/mlflow:latest
+
+# Install system dependencies
+USER root
+RUN apt-get update && apt-get install -y \
+    curl \
+    postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies as root (mlflow image uses root by default)
+RUN pip install --no-cache-dir \
+    psycopg2-binary==2.9.* \
+    sqlalchemy==1.4.* \
+    tensorboard>=2.15.0
+
+# Create artifacts directory
+RUN mkdir -p /mlflow/artifacts && chmod 755 /mlflow/artifacts
+
+# Health check script
+RUN echo '#!/bin/bash' > /usr/local/bin/health_check.sh && \
+    echo 'curl -f http://localhost:5000/ || exit 1' >> /usr/local/bin/health_check.sh && \
+    chmod +x /usr/local/bin/health_check.sh
+
+EXPOSE 5000
+
+# Default command (can be overridden in docker-compose)
+CMD ["mlflow", "server", "--host", "0.0.0.0", "--port", "5000"]
