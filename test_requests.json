@@ -1,0 +1,30 @@
+{
+  "recommendation_request": {
+    "user_id": "user_12345",
+    "merchant_id": "merchant_001",
+    "top_k": 10,
+    "context": "context_aware",
+    "user_location": [
+      -1.2921,
+      36.8219
+    ]
+  },
+  "forecast_request": {
+    "product_ids": [
+      "P001",
+      "P002",
+      "P003"
+    ],
+    "forecast_days": 30,
+    "include_external_factors": true
+  },
+  "fraud_request": {
+    "transaction_id": "txn_789",
+    "user_id": "user_12345",
+    "merchant_id": "merchant_001",
+    "amount": 15000.0,
+    "payment_method": "mobile_money",
+    "location": "nairobi",
+    "timestamp": "2025-10-02T08:09:25.224179"
+  }
+}

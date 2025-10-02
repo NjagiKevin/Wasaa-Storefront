@@ -1,0 +1,64 @@
+# Production Requirements - Essential packages only
+# FastAPI & Web
+fastapi
+uvicorn[standard]
+python-multipart
+pydantic
+pydantic-settings
+
+# Database
+SQLAlchemy
+psycopg2-binary
+alembic
+python-dotenv
+
+# Authentication & Security
+python-jose[cryptography]
+passlib[bcrypt]
+
+# Logging
+loguru
+
+# ML & Data (Essential only)
+numpy
+pandas
+scikit-learn
+joblib
+
+# Advanced ML (Essential only)
+xgboost
+# lightgbm  # Removed for Docker size
+# catboost  # Removed for Docker size
+
+# Time Series (Essential only)
+# statsmodels  # Removed for Docker size
+# pmdarima  # Removed for Docker size
+
+# Deep Learning - Removed for Docker compatibility
+# torch --index-url https://download.pytorch.org/whl/cpu
+
+# Feature Engineering - Removed for Docker size
+# shap
+
+# External Data
+holidays
+geopy
+
+# Experiment tracking
+mlflow-skinny==2.16.1
+bentoml
+
+# Caching and Performance
+redis
+hiredis
+
+# HTTP Client
+httpx
+requests
+
+# Development and Testing
+pytest
+pytest-asyncio
+
+# Utilities
+typing-extensions

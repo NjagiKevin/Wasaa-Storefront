@@ -5,15 +5,17 @@ networks:
 volumes:
   airflow_postgres_data:
   mlflow_postgres_data:
+  bentoml_postgres_data:
   redis_data:
   airflow_logs:
   mlflow_artifacts:
+  bentoml_artifacts:
   
 
 x-airflow-common: &airflow-common
   build:
-    context: ./airflow
-    dockerfile: Dockerfile
+    context: .
+    dockerfile: ./airflow/Dockerfile
   env_file:
     - .env
 
@@ -32,6 +34,7 @@ x-airflow-common: &airflow-common
     PYTHONPATH: /opt/airflow:/opt/airflow/dags:/opt/airflow/app
     MLFLOW_TRACKING_URI: http://mlflow:5000
     MLFLOW_EXPERIMENT_NAME: storefront-ml
+    BENTOML_HOME: /opt/bentoml
     DB_HOST: storefront_postgres
     DB_PORT: 5432
     DB_USER: storefront_user
@@ -44,12 +47,8 @@ x-airflow-common: &airflow-common
     POSTGRES_DB: storefront_db
   volumes:
     - ./airflow/dags:/opt/airflow/dags
-    - ./airflow/logs:/opt/airflow/logs
-    - ./airflow/plugins:/opt/airflow/plugins
+    - airflow_logs:/opt/airflow/logs
     - ./app:/opt/airflow/app
-    - ./data:/opt/airflow/data
-    - ./models:/opt/airflow/models
-    - ./scripts:/opt/airflow/scripts
   depends_on: &airflow-common-depends-on
     airflow-postgres:
       condition: service_healthy
@@ -103,6 +102,28 @@ services:
     networks:
       - storefront-network
 
+  # 🗄️ BentoML Database
+  bentoml-postgres:
+    image: postgres:15-alpine
+    container_name: storefront_bentoml_postgres
+    environment:
+      POSTGRES_USER: bentoml
+      POSTGRES_PASSWORD: bentoml_secure_pass
+      POSTGRES_DB: bentoml_db
+    volumes:
+      - bentoml_postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5435:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bentoml -d bentoml_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - storefront-network
+
   # 🔴 Redis Cache
   redis:
     image: redis:7-alpine
@@ -124,8 +145,8 @@ services:
   # 📊 MLflow Server
   mlflow:
     build:
-      context: ./airflow
-      dockerfile: Dockerfile.mlflow
+      context: .
+      dockerfile: ./airflow/Dockerfile.mlflow
     container_name: storefront_mlflow
     ports:
       - "5000:5000"
@@ -152,6 +173,38 @@ services:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    restart: unless-stopped
+    networks:
+      - storefront-network
+  
+  # 📦 BentoML Service
+  bentoml:
+    build:
+      context: .
+      dockerfile: Dockerfile.bentoml
+    container_name: storefront_bentoml
+    ports:
+      - "3000:3000"
+      - "3001:3001"
+    environment:
+      BENTOML_HOME: /bentoml
+      BENTOML_PORT: 3000
+      BENTOML_UI_PORT: 3001
+      BENTOML_DB_URL: postgresql://bentoml:bentoml_secure_pass@bentoml-postgres:5432/bentoml_db
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+    volumes:
+      - bentoml_artifacts:/bentoml
+    depends_on:
+      bentoml-postgres:
+        condition: service_healthy
+      mlflow:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/healthz"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -235,6 +288,8 @@ services:
       POSTGRES_PORT: ${DB_PORT}
       MLFLOW_TRACKING_URI: http://mlflow:5000
       MLFLOW_EXPERIMENT_NAME: storefront-ml
+      BENTOML_HOME: /app/bentoml
+      BENTOML_MODEL_STORE: http://bentoml:3000
       REDIS_HOST: redis
       REDIS_PORT: 6379
       SECRET_KEY: ${SECRET_KEY}
@@ -242,14 +297,12 @@ services:
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
     ports:
       - "8000:8000"
-    volumes:
-      - ./models:/app/models
-      - ./data:/app/data
-      - ./logs:/app/logs
     depends_on:
       redis:
         condition: service_healthy
       mlflow:
+        condition: service_healthy
+      bentoml:
         condition: service_healthy
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
     healthcheck:

@@ -1,0 +1,43 @@
+# Minimal Docker Requirements - Essential packages only for fast builds
+# FastAPI & Web
+fastapi
+uvicorn[standard]
+python-multipart
+pydantic
+pydantic-settings
+
+# Database
+SQLAlchemy
+psycopg2-binary
+alembic
+python-dotenv
+
+# Authentication & Security
+python-jose[cryptography]
+passlib[bcrypt]
+
+# Logging
+loguru
+
+# ML & Data (Core only)
+numpy
+pandas
+scikit-learn
+joblib
+
+# Single ML package for basic functionality
+xgboost
+
+# Experiment tracking (minimal)
+mlflow-skinny==2.16.1
+bentoml
+
+# Caching
+redis
+
+# HTTP Client
+httpx
+requests
+
+# Utilities
+typing-extensions

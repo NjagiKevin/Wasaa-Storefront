@@ -1,0 +1,65 @@
+service: "storefront_ml_service:svc"
+name: "wasaa-storefront-ml"
+version: "2.0.0"
+description: "WasaaChat Storefront ML Services - AI-powered recommendations, forecasting, and fraud detection with robust fallback mechanisms"
+
+labels:
+  project: "wasaa-storefront"
+  environment: "production"
+  version: "2.0.0"
+  author: "WasaaChat Team"
+  ai_capabilities: "recommendations,forecasting,fraud_detection"
+
+include:
+- "app/"
+- "storefront_ml_service.py"
+- "requirements_docker.txt"
+- "bentoml_utils.py"
+
+exclude:
+- "tests/"
+- "docs/"
+- "__pycache__/"
+- "*.pyc"
+- ".git/"
+- ".env"
+- "airflow/"
+- "*.log"
+- "*.pkl"
+- "*.pth"
+
+python:
+  requirements_txt: "requirements_docker.txt"
+  lock_packages: false
+  index_url: "https://download.pytorch.org/whl/cpu"
+  extra_index_url:
+    - "https://pypi.org/simple/"
+
+# Simplified resource configuration for production
+resources:
+  cpu: "2.0"
+  memory: "4Gi"
+  
+# Environment variables for the service
+envs:
+- name: "MLFLOW_TRACKING_URI"
+  value: "http://mlflow:5000"
+- name: "BENTOML_HOME"
+  value: "/bentoml"
+- name: "LOG_LEVEL"
+  value: "INFO"
+- name: "PYTHONPATH"
+  value: "/bentoml:/bentoml/app"
+
+# Docker configuration
+docker:
+  base_image: "python:3.11-slim"
+  cuda_version: null  # Explicitly no CUDA
+  system_packages:
+    - "curl"
+    - "gcc"
+    - "g++"
+  run_as_root: false
+  
+# Health check configuration
+models: []  # Models will be loaded dynamically by the service

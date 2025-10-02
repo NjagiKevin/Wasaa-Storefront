@@ -1,0 +1,46 @@
+FROM python:3.11-slim
+
+# Set working directory
+WORKDIR /bentoml
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install BentoML and related dependencies
+RUN pip install --no-cache-dir \
+    bentoml>=1.2.0 \
+    mlflow-skinny==2.16.1 \
+    psycopg2-binary \
+    scikit-learn \
+    pandas \
+    numpy \
+    torch --index-url https://download.pytorch.org/whl/cpu \
+    xgboost \
+    catboost
+
+# Create BentoML home directory
+RUN mkdir -p /bentoml
+
+# Copy BentoML configuration and models
+COPY bentofile.yaml /bentoml/
+COPY storefront_ml_service.py /bentoml/
+COPY app/ /bentoml/app/
+
+# Set environment variables
+ENV BENTOML_HOME=/bentoml
+ENV BENTOML_PORT=3000
+ENV BENTOML_UI_PORT=3001
+
+# Expose ports for BentoML API and UI
+EXPOSE 3000 3001
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=5 \
+    CMD curl -f http://localhost:3000/healthz || exit 1
+
+# Start BentoML server
+CMD ["bentoml", "serve", "--port", "3000", "--host", "0.0.0.0"]

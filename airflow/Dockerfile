@@ -6,8 +6,14 @@ ENV AIRFLOW_HOME=/opt/airflow
 ENV AIRFLOW__CORE__LOAD_EXAMPLES=False
 ENV PYTHONPATH="${AIRFLOW_HOME}/dags:${AIRFLOW_HOME}/app:${PYTHONPATH}"
 
-# Requirements are copied; DAGs are bind-mounted at runtime to avoid duplication
-COPY ./requirements.txt ${AIRFLOW_HOME}/requirements.txt
+# Switch to root to install system packages
+USER root
+RUN apt-get update && apt-get install -y \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy Airflow-specific requirements
+COPY airflow/airflow_requirements.txt ${AIRFLOW_HOME}/requirements.txt
 
 # Install Python dependencies
 USER airflow

@@ -1,0 +1,14 @@
+# Minimal requirements for development and testing
+# Install with: pip install -r dev_requirements.txt
+
+# Core dependencies for testing
+pyyaml
+pydantic
+numpy
+
+# Optional but recommended for development
+bentoml>=1.2.0
+
+# If you want to test the full service locally
+pandas
+scikit-learn

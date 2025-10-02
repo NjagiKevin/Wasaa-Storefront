@@ -1,0 +1,18 @@
+# Airflow-specific requirements for ML workloads
+# Minimal to avoid dependency conflicts and reduce build time
+
+# Core ML Libraries (essential only)
+scikit-learn
+pandas
+numpy
+joblib
+
+# MLflow integration
+mlflow-skinny==2.16.1
+
+# Database connectivity
+psycopg2-binary
+
+# Utilities
+python-dotenv
+pydantic
